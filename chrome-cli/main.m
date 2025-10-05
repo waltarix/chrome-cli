@@ -85,6 +85,8 @@ int main(int argc, const char * argv[])
 
     [argonaut add:@"execute <javascript>" target:app action:@selector(executeJavascriptInActiveTab:) description:@"Execute javascript in active tab"];
     [argonaut add:@"execute <javascript> -t <id>" target:app action:@selector(executeJavascriptInTab:) description:@"Execute javascript in specific tab"];
+    [argonaut add:@"execute" target:app action:@selector(executeJavascriptFromStdinInActiveTab:) description:@"Execute javascript from stdin in active tab"];
+    [argonaut add:@"execute -t <id>" target:app action:@selector(executeJavascriptFromStdinInTab:) description:@"Execute javascript from stdin in specific tab"];
 
     [argonaut add:@"chrome version" target:app action:@selector(printChromeVersion:) description:@"Print Chrome version"];
     [argonaut add:@"version" target:app action:@selector(printVersion:) description:@"Print application version"];

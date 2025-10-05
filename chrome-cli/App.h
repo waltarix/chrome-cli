@@ -54,6 +54,8 @@ typedef enum {
 - (void)setWindowPosition:(Arguments *)args;
 - (void)executeJavascriptInActiveTab:(Arguments *)args;
 - (void)executeJavascriptInTab:(Arguments *)args;
+- (void)executeJavascriptFromStdinInActiveTab:(Arguments *)args;
+- (void)executeJavascriptFromStdinInTab:(Arguments *)args;
 - (void)printSourceFromActiveTab:(Arguments *)args;
 - (void)printSourceFromTab:(Arguments *)args;
 - (void)printChromeVersion:(Arguments *)args;

@@ -636,6 +636,81 @@ static NSString * const kJsPrintSource = @"(function() { return document.getElem
     }
 }
 
+- (void)executeJavascriptFromStdinInActiveTab:(Arguments *)args {
+    NSFileHandle *stdin = [NSFileHandle fileHandleWithStandardInput];
+    NSData *inputData = [stdin readDataToEndOfFile];
+    NSString *js = [[NSString alloc] initWithData:inputData encoding:NSUTF8StringEncoding];
+
+    // Check for invalid UTF-8 encoding
+    if (!js) {
+        if (self->outputFormat == kOutputFormatText) {
+            printf("Error: Invalid UTF-8 encoding in stdin\n");
+        }
+        return;
+    }
+
+    chromeTab *tab = [self activeTab];
+    if (!tab) {
+        return;
+    }
+
+    id data = [tab executeJavascript:js];
+
+    if (self->outputFormat == kOutputFormatJSON) {
+        NSString *jsOutput = [[NSString alloc] init];
+        if (data) {
+            jsOutput = (NSString *)data;
+        }
+        NSDictionary *output = @{
+            @"output" : jsOutput,
+        };
+        [self printJSON:output];
+    } else {
+        if (!data) {
+            return;
+        }
+        printf("%s\n", [(NSString *)data UTF8String]);
+    }
+}
+
+- (void)executeJavascriptFromStdinInTab:(Arguments *)args {
+    NSInteger tabId = [args asInteger:@"id"];
+    NSFileHandle *stdin = [NSFileHandle fileHandleWithStandardInput];
+    NSData *inputData = [stdin readDataToEndOfFile];
+    NSString *js = [[NSString alloc] initWithData:inputData encoding:NSUTF8StringEncoding];
+
+    // Check for invalid UTF-8 encoding
+    if (!js) {
+        if (self->outputFormat == kOutputFormatText) {
+            printf("Error: Invalid UTF-8 encoding in stdin\n");
+        }
+        return;
+    }
+
+    chromeTab *tab = [self findTab:tabId];
+    if (!tab) {
+        return;
+    }
+
+    id data = [tab executeJavascript:js];
+
+    if (self->outputFormat == kOutputFormatJSON) {
+        NSString *jsOutput = [[NSString alloc] init];
+        if (data) {
+            jsOutput = (NSString *)data;
+        }
+        NSDictionary *output = @{
+            @"output" : jsOutput,
+        };
+        [self printJSON:output];
+    } else {
+        if (!data) {
+            return;
+        }
+        printf("%s\n", [(NSString *)data UTF8String]);
+    }
+}
+
 - (void)printSourceFromActiveTab:(Arguments *)args {
     chromeTab *tab = [self activeTab];
     if (!tab) {
